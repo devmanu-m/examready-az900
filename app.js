@@ -10,9 +10,19 @@ const DOMAIN_NAMES = {
 // Check these against the current AZ-900 skills outline on Microsoft Learn.
 const WEIGHTS = { 1: 0.28, 2: 0.37, 3: 0.35 };
 
+// Where the "Re-read" links go. One link per exam area.
+// After you verify content, swap these for the exact module pages on Microsoft Learn.
+const LEARN_LINKS = {
+  1: "https://learn.microsoft.com/en-us/training/paths/microsoft-azure-fundamentals-describe-cloud-concepts/",
+  2: "https://learn.microsoft.com/en-us/training/paths/azure-fundamentals-describe-azure-architecture-services/",
+  3: "https://learn.microsoft.com/en-us/training/paths/describe-azure-management-governance/"
+};
+
 const SEEN_KEY = "examready_seen";
 const HISTORY_KEY = "examready_history";
 let quiz = null;
+let slides = null;      // the list of slide HTML strings, or null when not on slides
+let slideIndex = 0;
 
 // ---------- helpers ----------
 
@@ -136,7 +146,6 @@ function getVerdict(pct) {
   return { label: "Not yet", text: "Not ready yet, and that is useful to know. Your weak topics show where to start." };
 }
 
-// Works out everything the report needs, once per quiz.
 function calcResult() {
   const byDomain = {};
   const byTopic = {};
@@ -155,8 +164,6 @@ function calcResult() {
     else byTopic[q.topic].traps.push(q.trap);
   });
 
-  // Weighted score: each exam area counts by its weight,
-  // so a strong small area can't hide a weak big one.
   let weighted = 0;
   let weightSum = 0;
   for (const d in byDomain) {
@@ -183,6 +190,7 @@ function calcResult() {
 // ---------- screens ----------
 
 function showHome() {
+  slides = null;
   app.innerHTML = `
     <h1>ExamReady</h1>
     <p class="lead">Practice AZ-900, then see exactly what to fix before you book.</p>
@@ -196,6 +204,7 @@ function showHome() {
 }
 
 function startQuiz(questions) {
+  slides = null;
   quiz = {
     items: questions.map(q => ({
       q: q,
@@ -261,14 +270,13 @@ function nextQuestion() {
   }
 }
 
-// Calculates the result once, then draws it.
 function showReport() {
   quiz.result = calcResult();
   renderReport();
 }
 
-// Draws the report from the saved result (safe to call again later).
 function renderReport() {
+  slides = null;
   const r = quiz.result;
 
   let comparison = "";
@@ -303,6 +311,8 @@ function renderReport() {
       <p class="muted">Weighted by exam area. The gold line marks an estimated pass level of 70%. One short quiz can’t predict your real scaled score.</p>
     </div>
 
+    <button class="primary" onclick="showSlides()">Show me my game plan</button>
+
     <div class="card">
       <h3>Review your answers</h3>
       ${review}
@@ -310,16 +320,99 @@ function renderReport() {
 
     <div class="row">
       <button onclick="startQuiz(pickRetry(getWeakTopics()))" ${r.weak.length ? "" : "disabled"}>Retry my weak spots</button>
-      <button class="primary" onclick="startQuiz(pickMixed())">New quiz</button>
+      <button onclick="startQuiz(pickMixed())">New quiz</button>
       <button onclick="showHome()">Home</button>
     </div>
   `;
 
-  // let the page draw first, so the bar animates from 0
   setTimeout(() => {
     const bar = document.getElementById("report-bar");
     if (bar) bar.style.width = r.pct + "%";
   }, 60);
 }
+
+// ---------- game plan slides ----------
+
+function showSlides() {
+  const r = quiz.result;
+
+  // Slide 1: what they nailed
+  const nailed = r.strong.length
+    ? `<ul>${r.strong.map(t =>
+        `<li><b>${t}</b> <span class="muted">(${DOMAIN_NAMES[r.byTopic[t].domain]})</span></li>`
+      ).join("")}</ul>`
+    : `<p>No topic was fully clean this round. That’s normal at the start. The next slides show where to begin.</p>`;
+
+  // Slide 2: topics to re-read, with links
+  const another = r.weak.length
+    ? `<ul>${r.weak.map(t => {
+        const info = r.byTopic[t];
+        const missed = info.total - info.correct;
+        return `<li><b>${t}</b>: missed ${missed} of ${info.total}.
+          <a href="${LEARN_LINKS[info.domain]}" target="_blank" rel="noopener">Re-read ${DOMAIN_NAMES[info.domain]}</a></li>`;
+      }).join("")}</ul>`
+    : `<p>No weak spots this round. Take a new quiz to cover different questions.</p>`;
+
+  // Slide 3: the misconceptions behind the wrong answers
+  const allTraps = [...new Set(r.weak.flatMap(t => r.byTopic[t].traps))];
+  const traps = allTraps.length
+    ? `<ul>${allTraps.map(t => `<li>${t}</li>`).join("")}</ul>
+       <p class="muted">These are the misunderstandings your wrong answers pointed to.</p>`
+    : `<p>No traps triggered. Nice work.</p>`;
+
+  // Slide 4: next steps
+  const plan = `
+    <ol>
+      <li>Re-read the linked sections for your weak topics.</li>
+      <li>Retry only your weak spots.</li>
+      <li>Take a fresh mixed quiz and compare your score.</li>
+    </ol>
+    <div class="row">
+      <button class="primary" onclick="startQuiz(pickRetry(getWeakTopics()))" ${r.weak.length ? "" : "disabled"}>Retry my weak spots</button>
+      <button onclick="startQuiz(pickMixed())">New quiz</button>
+    </div>`;
+
+  slides = [
+    `<h2>What you nailed</h2>${nailed}`,
+    `<h2>Worth another look</h2>${another}`,
+    `<h2>Your traps</h2>${traps}`,
+    `<h2>Your game plan</h2>${plan}`
+  ];
+  slideIndex = 0;
+  drawSlide();
+}
+
+function drawSlide() {
+  const total = slides.length;
+  const current = slides[slideIndex];
+  const list = slides; // keep, because rendering must not clear it
+
+  app.innerHTML = `
+    <div class="card slide">${current}</div>
+    <div class="row spread">
+      <button onclick="slideMove(-1)">${slideIndex === 0 ? "Back to report" : "Back"}</button>
+      <span class="muted">${slideIndex + 1} / ${total}</span>
+      <button class="primary" onclick="slideMove(1)" ${slideIndex === total - 1 ? "disabled" : ""}>Next</button>
+    </div>
+  `;
+  slides = list;
+}
+
+function slideMove(step) {
+  if (!slides) return;
+  if (slideIndex + step < 0) {
+    renderReport();
+    return;
+  }
+  slideIndex = Math.min(slides.length - 1, slideIndex + step);
+  drawSlide();
+}
+
+// arrow keys move through the slides
+document.addEventListener("keydown", e => {
+  if (!slides) return;
+  if (e.key === "ArrowRight") slideMove(1);
+  if (e.key === "ArrowLeft") slideMove(-1);
+});
 
 showHome();
