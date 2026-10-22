@@ -327,7 +327,6 @@ function countUp(el, target) {
 function renderReport() {
   slides = null;
   const r = quiz.result;
-  const CIRC = 339.3; // circle length: 2 x pi x radius (54)
 
   let comparison = "";
   if (r.previous !== null) {
@@ -350,21 +349,18 @@ function renderReport() {
   app.innerHTML = `
     <div class="card center">
       <p class="muted">Your readiness estimate</p>
-      <div class="gauge">
-        <svg viewBox="0 0 140 140" role="img" aria-label="Readiness ${r.pct} percent">
-          <circle class="trk" cx="70" cy="70" r="54" />
-          <circle id="arc" class="arc" cx="70" cy="70" r="54"
-            stroke-dasharray="${CIRC}" stroke-dashoffset="${CIRC}" transform="rotate(-90 70 70)" />
-          <line class="pass-tick" x1="70" y1="8" x2="70" y2="24" transform="rotate(252 70 70)" />
-        </svg>
-        <div class="gauge-num"><span><span id="num">0</span>%</span></div>
+      <div class="score"><span id="num">0</span>%</div>
+      <div class="meter" role="img" aria-label="Readiness ${r.pct} percent, estimated pass level 70 percent">
+        <span class="meter-fill" id="fill"></span>
+        <span class="meter-tick"></span>
+        <span class="meter-label">Est. pass level</span>
       </div>
       <div class="verdict ${r.verdict.tone}">
         <p><span class="tag">${r.verdict.label}</span></p>
         <p>${r.verdict.text}</p>
         ${comparison}
       </div>
-      <p class="muted">Weighted by exam area. The gold tick marks an estimated pass level of 70%. One short quiz can’t predict your real scaled score.</p>
+      <p class="muted">Weighted by exam area. The orange tick marks an estimated pass level of 70%. One short quiz can’t predict your real scaled score.</p>
     </div>
 
     <button class="cta" onclick="showSlides()">Show me my game plan</button>
@@ -381,9 +377,9 @@ function renderReport() {
     </div>
   `;
 
-  // let the page draw first, so the ring fills and the number counts up
+  // let the page draw first, so the bar fills and the number counts up together
   setTimeout(() => {
-    document.getElementById("arc").style.strokeDashoffset = CIRC * (1 - r.pct / 100);
+    document.getElementById("fill").style.width = r.pct + "%";
     countUp(document.getElementById("num"), r.pct);
   }, 80);
 }
