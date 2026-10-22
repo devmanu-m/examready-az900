@@ -1,28 +1,32 @@
 :root {
-  --bg: #eef2ef;
-  --ink: #14231f;
-  --muted: #4d605a;
+  --bg: #f3f5f9;
+  --ink: #0b1530;
+  --muted: #52607a;
   --card: #ffffff;
-  --line: #cdd8d3;
-  --accent: #1f4fd8;
+  --line: #d9dfeb;
+  --accent: #2f5bff;
   --on-accent: #ffffff;
-  --ok: #1a7f53;
-  --bad: #c93b26;
-  --gold: #f2b01e;
+  --ok: #16905f;
+  --bad: #d1432d;
+  --gold: #ffb703;
+  --hero-1: #0b1530;
+  --hero-2: #1a2f5e;
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0f1815;
-    --ink: #e8f0ec;
-    --muted: #9db0a8;
-    --card: #18241f;
-    --line: #2b3c35;
-    --accent: #8aa9ff;
-    --on-accent: #0b1020;
-    --ok: #4cc58a;
-    --bad: #ff7a63;
+    --bg: #070d1c;
+    --ink: #e9eefc;
+    --muted: #9aa8c7;
+    --card: #101a33;
+    --line: #223056;
+    --accent: #7f9dff;
+    --on-accent: #0a1230;
+    --ok: #46c98f;
+    --bad: #ff7d68;
+    --hero-1: #0f1c40;
+    --hero-2: #25418a;
     color-scheme: dark;
   }
 }
@@ -36,17 +40,17 @@ body {
 
 h1, h2, h3 {
   font-family: "Bricolage Grotesque", system-ui, sans-serif;
-  line-height: 1.1;
+  line-height: 1.05;
   margin: 0 0 0.5em;
 }
 
-h1 { font-size: clamp(40px, 10vw, 64px); font-weight: 800; }
+h1 { font-size: clamp(38px, 9vw, 60px); font-weight: 800; }
 h2 { font-size: clamp(22px, 5vw, 30px); }
 
 main {
-  max-width: 720px;
+  max-width: 760px;
   margin: 0 auto;
-  padding: 20px 16px 40px;
+  padding: 18px 16px 40px;
 }
 
 footer {
@@ -55,37 +59,69 @@ footer {
   margin-top: 28px;
 }
 
+.muted { color: var(--muted); }
+.lead { font-size: 19px; }
+
 .card {
   background: var(--card);
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: 18px;
   padding: 20px;
   margin: 14px 0;
 }
 
-.muted { color: var(--muted); }
-.lead { font-size: 19px; }
+/* ---------- hero (home screen) ---------- */
 
-/* ---------- buttons and inputs ---------- */
+.hero, .stage {
+  background: linear-gradient(145deg, var(--hero-1), var(--hero-2));
+  color: #fff;
+  border-radius: 24px;
+}
 
-button, input {
+.hero { padding: clamp(22px, 5vw, 38px); }
+.hero p { color: #d6def5; }
+
+.badge {
+  display: inline-block;
+  border: 1px solid #ffffff66;
+  border-radius: 99px;
+  padding: 3px 12px;
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+
+.stats {
+  display: flex;
+  gap: 26px;
+  flex-wrap: wrap;
+  margin: 20px 0;
+}
+
+.stats div { color: #d6def5; }
+
+.stats b {
+  display: block;
+  color: #fff;
+  font: 800 32px/1 "Bricolage Grotesque", system-ui, sans-serif;
+}
+
+/* ---------- buttons ---------- */
+
+button {
   font: inherit;
   color: var(--ink);
   background: var(--card);
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 12px 16px;
   min-height: 44px;
-}
-
-button {
   cursor: pointer;
   text-align: left;
-  transition: border-color 0.15s, background-color 0.15s, filter 0.15s;
+  transition: border-color 0.15s, transform 0.15s;
 }
 
 button:hover:not(:disabled) { border-color: var(--accent); }
-button:disabled { cursor: default; opacity: 0.55; }
+button:disabled { opacity: 0.5; cursor: default; }
 
 button:focus-visible, a:focus-visible, summary:focus-visible {
   outline: 3px solid var(--accent);
@@ -99,19 +135,86 @@ button:focus-visible, a:focus-visible, summary:focus-visible {
   font-weight: 600;
 }
 
-.primary:hover:not(:disabled) { filter: brightness(1.08); }
+.cta {
+  background: var(--gold);
+  color: #0b1530;
+  border: 0;
+  font-weight: 700;
+  font-size: 18px;
+  padding: 14px 26px;
+  text-align: center;
+}
 
-/* the small "Reset my progress" button under the home screen */
+.cta:hover:not(:disabled) { transform: translateY(-2px); }
+
 p.muted button {
   min-height: 36px;
   padding: 6px 12px;
   font-size: 14px;
-  margin-left: 6px;
 }
 
-/* ---------- quiz options ---------- */
+/* ---------- exam area cards ---------- */
 
-.option { display: block; width: 100%; margin: 8px 0; }
+.areas {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+}
+
+.area { margin: 0; }
+
+.area-num {
+  font: 800 36px/1 "Bricolage Grotesque", system-ui, sans-serif;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.area p { margin: 0 0 8px; }
+
+.chip {
+  display: inline-block;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  padding: 1px 10px;
+  font-size: 13px;
+  margin: 3px 3px 0 0;
+}
+
+/* ---------- quiz ---------- */
+
+.dots, .segs { display: flex; gap: 5px; }
+
+.dots span, .segs span {
+  flex: 1;
+  height: 6px;
+  border-radius: 9px;
+  background: var(--line);
+}
+
+.dots .on, .segs .on { background: var(--accent); }
+.dots .cur { background: var(--gold); }
+
+.option {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  margin: 9px 0;
+}
+
+.letter {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  font-size: 14px;
+}
+
 .option:disabled { color: var(--ink); opacity: 1; }
 
 .option.correct {
@@ -129,47 +232,54 @@ p.muted button {
   padding-left: 12px;
 }
 
-/* feedback fades in when you answer, so the change is easy to see */
-#feedback > * { animation: fade-in 0.25s ease both; }
+#feedback > * { animation: rise 0.25s both; }
 
-/* ---------- progress bar and report ---------- */
+/* ---------- readiness report ---------- */
 
-.bar {
-  height: 14px;
-  background: var(--line);
-  border-radius: 9px;
+.center { text-align: center; }
+
+.gauge {
   position: relative;
+  max-width: 260px;
+  margin: 6px auto;
 }
 
-.bar-fill {
-  display: block;
-  height: 100%;
-  border-radius: 9px;
-  background: var(--accent);
-  transition: width 0.9s ease;
+.gauge svg { width: 100%; display: block; }
+
+.trk { fill: none; stroke: var(--line); stroke-width: 12; }
+
+.arc {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 12;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.pass-line {
+.pass-tick { stroke: var(--gold); stroke-width: 3; }
+
+.gauge-num {
   position: absolute;
-  top: -5px;
-  bottom: -5px;
-  left: 70%;
-  width: 3px;
-  background: var(--gold);
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font: 800 clamp(48px, 14vw, 68px) / 1 "Bricolage Grotesque", system-ui, sans-serif;
 }
 
-.big {
-  font: 800 clamp(64px, 20vw, 120px) / 1 "Bricolage Grotesque", system-ui, sans-serif;
-}
+/* the verdict arrives after the number finishes counting */
+.verdict { animation: rise 0.5s 1.1s both; }
 
 .tag {
   display: inline-block;
-  background: var(--gold);
-  color: #14231f;
+  color: #0b1530;
   border-radius: 99px;
-  padding: 2px 12px;
-  font-weight: 600;
+  padding: 3px 14px;
+  font-weight: 700;
+  background: #ffb703;
 }
+
+.good .tag { background: #7be0b0; }
+.low .tag { background: #ff9b8a; }
 
 .row {
   display: flex;
@@ -182,50 +292,62 @@ p.muted button {
 
 details { border-top: 1px solid var(--line); padding: 10px 0; }
 summary { cursor: pointer; font-weight: 600; }
-li { margin: 6px 0; }
+li { margin: 8px 0; }
 a { color: var(--accent); text-underline-offset: 3px; }
 
-pre {
-  white-space: pre-wrap;
-  background: var(--bg);
-  padding: 12px;
-  border-radius: 10px;
-  font-size: 14px;
+/* ---------- game plan slides ---------- */
+
+.stage {
+  padding: clamp(22px, 6vw, 40px);
+  min-height: 380px;
+  margin: 14px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  animation: rise 0.3s both;
 }
 
-/* ---------- slides ---------- */
+.stage h2 { font-size: clamp(34px, 9vw, 58px); }
+.stage li, .stage p { font-size: 19px; color: #e6ebfb; }
+.stage b { color: #fff; }
+.stage a { color: var(--gold); }
 
-.slide {
-  min-height: 320px;
-  animation: fade-in 0.25s ease both;
+.stage .kicker {
+  color: var(--gold);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  font-size: 13px;
+  text-transform: uppercase;
+  margin: 0 0 8px;
 }
 
-@keyframes fade-in {
-  from { opacity: 0; transform: translateY(6px); }
+.stage .row button {
+  background: #fff;
+  color: #0b1530;
+  border: 0;
+  font-weight: 600;
+}
+
+.stage .row .cta { background: var(--gold); }
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: none; }
 }
 
-/* ---------- small screens ---------- */
-
 @media (max-width: 480px) {
-  .row button { flex: 1 1 100%; text-align: center; }
-  .row.spread button { flex: 0 0 auto; }
+  .row:not(.spread) button { flex: 1 1 100%; text-align: center; }
 }
 
-/* ---------- respect reduced motion ---------- */
-
 @media (prefers-reduced-motion: reduce) {
-  .bar-fill { transition: none; }
-  .slide, #feedback > * { animation: none; }
+  .arc { transition: none; }
+  .verdict, .stage, #feedback > * { animation: none; }
   button { transition: none; }
 }
 
-/* ---------- print: Ctrl+P on the report gives a clean one-pager ---------- */
-
+/* Ctrl+P on the report gives a clean one-pager */
 @media print {
   body { background: #fff; color: #000; }
-  button, .row, .bar { display: none; }
-  details { border-top: 1px solid #999; }
-  details[open] summary, summary { color: #000; }
+  button, .row, .dots { display: none; }
   .card { border-color: #999; break-inside: avoid; }
 }
