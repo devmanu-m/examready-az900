@@ -350,17 +350,17 @@ function renderReport() {
     <div class="card center">
       <p class="muted">Your readiness estimate</p>
       <div class="score"><span id="num">0</span>%</div>
-      <div class="meter" role="img" aria-label="Readiness ${r.pct} percent, estimated pass level 70 percent">
+      <div class="meter" role="img" aria-label="Readiness ${r.pct} percent. The ready-to-book level is 80 percent.">
         <span class="meter-fill" id="fill"></span>
         <span class="meter-tick"></span>
-        <span class="meter-label">Est. pass level</span>
+        <span class="meter-label">Ready to book</span>
       </div>
       <div class="verdict ${r.verdict.tone}">
         <p><span class="tag">${r.verdict.label}</span></p>
         <p>${r.verdict.text}</p>
         ${comparison}
       </div>
-      <p class="muted">Weighted by exam area. The orange tick marks an estimated pass level of 70%. One short quiz can’t predict your real scaled score.</p>
+      <p class="muted">Weighted by exam area. The orange tick marks 80%, where we call you ready to book. One short quiz can’t predict your real scaled score.</p>
     </div>
 
     <button class="cta" onclick="showSlides()">Show me my game plan</button>

@@ -305,11 +305,12 @@ p.muted button {
   transition: width 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
+/* the tick and its label sit at 80%, the "Ready to book" line */
 .meter-tick {
   position: absolute;
   top: -6px;
   bottom: -6px;
-  left: 70%;
+  left: 80%;
   width: 3px;
   background: var(--warm);
   border-radius: 2px;
@@ -318,7 +319,7 @@ p.muted button {
 .meter-label {
   position: absolute;
   top: 22px;
-  left: 70%;
+  left: 80%;
   transform: translateX(-50%);
   font-size: 12px;
   color: var(--muted);
