@@ -415,3 +415,49 @@ a { color: var(--brand); text-underline-offset: 3px; }
   button, .row, .dots { display: none; }
   .card { border-color: #999; break-inside: avoid; }
 }
+/* Quiz countdown timer */
+#app > .quiz-timer {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  left: auto;
+  bottom: auto;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
+  margin: 0;
+  padding: 10px 16px;
+  background: var(--card);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.timer-icon {
+  font-size: 20px;
+}
+
+.timer-label {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+#time {
+  font-variant-numeric: tabular-nums;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.quiz-timer.warning {
+  color: var(--bad);
+  border-color: var(--bad);
+  background: var(--card);
+}
+
+.quiz-timer.warning .timer-label {
+  color: var(--bad);
+}
